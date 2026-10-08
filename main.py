@@ -1,13 +1,9 @@
-import time
-
 import mlx.core as mx
 import numpy as np
 from gigaam_mlx import load_model
 from gigaam_mlx.audio import compute_mel, load_audio, split_audio
 
 from converter import extract_audio
-
-total_start = time.perf_counter()
 
 video_path = "lecture.mp4"
 audio_path = "lecture_audio.mp3"
@@ -44,5 +40,3 @@ text = " ".join(texts)
 
 with open("lecture_transcript.txt", "w", encoding="utf-8") as f:
     f.write(text)
-
-print(f"Total time: {time.perf_counter() - total_start:.3f} seconds")
