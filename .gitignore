@@ -1,0 +1,6 @@
+.DS_Store
+.venv
+*.mp4
+*.mp3
+*_transcript.txt
+__pycache__
