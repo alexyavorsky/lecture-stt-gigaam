@@ -8,35 +8,39 @@ from converter import extract_audio
 video_path = "lecture.mp4"
 audio_path = "lecture_audio.mp3"
 
-lecture = extract_audio(video_path, audio_path)
+def transcript(video_path: str, audio_path: str) -> None:
+    extract_audio(video_path, audio_path)  # Перевод видео в звук
 
-model, tokenizer = load_model(model_type="rnnt")
+    model, tokenizer = load_model(model_type="rnnt")
 
-audio = load_audio(audio_path)
-chunks = split_audio(audio, max_chunk_sec=20)
+    audio = load_audio(audio_path)
+    chunks = split_audio(audio, max_chunk_sec=20)
+    
 
-texts = []
+    texts = []
 
-for i, chunk in enumerate(chunks):
-    start = chunk["start_sample"]
-    end = chunk["end_sample"]
+    for i, chunk in enumerate(chunks):
+        start = chunk["start_sample"]
+        end = chunk["end_sample"]
 
-    chunk_audio = audio[start:end]
+        chunk_audio = audio[start:end]
 
-    mel = compute_mel(chunk_audio)
-    mel_mx = mx.array(mel[np.newaxis])
+        mel = compute_mel(chunk_audio)
+        mel_mx = mx.array(mel[np.newaxis])
 
-    encoded, seq_len = model.encode(mel_mx)
-    mx.eval(encoded)
+        encoded, seq_len = model.encode(mel_mx)
+        mx.eval(encoded)
 
-    token_ids = model.decode(encoded, seq_len)
-    text = tokenizer.decode(token_ids)
+        token_ids = model.decode(encoded, seq_len)
+        text = tokenizer.decode(token_ids)
 
-    texts.append(text)
+        texts.append(text)
 
-    print(f"{i + 1}/{len(chunks)}")
+        print(f"{i + 1}/{len(chunks)}")
 
-text = " ".join(texts)
+    text = " ".join(texts)
 
-with open("lecture_transcript.txt", "w", encoding="utf-8") as f:
-    f.write(text)
+    with open("lecture_transcript.txt", "w", encoding="utf-8") as f:
+        f.write(text)
+
+transcript(video_path, audio_path)
